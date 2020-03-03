@@ -1,15 +1,16 @@
-import requests
 import json
+import requests
 from requests.exceptions import HTTPError
-from urllib.parse import urlencode
+
+from astropy.time import Time, TimezoneInfo
+from crispy_forms.layout import Layout, Div, Fieldset, HTML
 from dateutil.parser import parse
 from django import forms
-from crispy_forms.layout import Layout, Div, Fieldset, HTML
-from astropy.time import Time, TimezoneInfo
+from urllib.parse import urlencode
 
 from tom_alerts.alerts import GenericQueryForm, GenericAlert, GenericBroker
-from tom_targets.models import Target
 from tom_dataproducts.models import ReducedDatum
+from tom_targets.models import Target, TargetExtra
 
 MARS_URL = 'https://mars.lco.global'
 filters = {0: 'g', 1: 'r', 2: 'i'}
@@ -241,14 +242,23 @@ class MARSBroker(GenericBroker):
 
     def to_target(self, alert):
         alert_copy = alert.copy()
-        target = Target.objects.create(
-            name=alert_copy['objectId'],
-            type='SIDEREAL',
-            ra=alert_copy['candidate'].pop('ra'),
-            dec=alert_copy['candidate'].pop('dec'),
-            galactic_lng=alert_copy['candidate'].pop('l'),
-            galactic_lat=alert_copy['candidate'].pop('b'),
-        )
+        target, created = Target.objects.get_or_create(name=alert_copy['objectId'], type='SIDEREAL')
+        print(target)
+        print(created)
+        if created:
+            target.ra = alert_copy['candidate'].pop('ra')
+            target.dec = alert_copy['candidate'].pop('dec')
+            target.galactic_lng = alert_copy['candidate'].pop('l')
+            target.galactic_lat = alert_copy['candidate'].pop('b')
+            target.save()
+        elif target.ra != alert_copy['candidate'].get('ra') and target.dec != alert_copy['candidate'].get('dec'):
+            # If the alert is for an existing candidate, save the ra/dec as a TargetExtra, if they differ
+            TargetExtra.objects.get_or_create(target=target, key=alert_copy['candidate'].pop('jd'), value=json.dumps({
+                'ra': alert_copy['candidate'].pop('ra'),
+                'dec': alert_copy['candidate'].pop('dec'),
+                'galactic_lng': alert_copy['candidate'].pop('l'),
+                'galactic_lat': alert_copy['candidate'].pop('b'),
+            }))
         return target
 
     def to_generic_alert(self, alert):

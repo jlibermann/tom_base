@@ -230,13 +230,13 @@ class CreateTargetFromAlertView(LoginRequiredMixin, View):
             return redirect(reverse('tom_alerts:run', kwargs={'pk': query_id}))
         for alert_id in alerts:
             cached_alert = cache.get('alert_{}'.format(alert_id))
+            print(cached_alert)
             if not cached_alert:
                 messages.error(request, 'Could not create targets. Try re running the query again.')
                 return redirect(reverse('tom_alerts:run', kwargs={'pk': query_id}))
-            generic_alert = broker_class().to_generic_alert(json.loads(cached_alert))
-            target = generic_alert.to_target()
+            # generic_alert = broker_class().to_generic_alert(json.loads(cached_alert))
             try:
-                target.save()
+                target = broker_class().to_target(json.loads(cached_alert))
                 broker_class().process_reduced_data(target, json.loads(cached_alert))
                 for group in request.user.groups.all().exclude(name='Public'):
                     assign_perm('tom_targets.view_target', group, target)

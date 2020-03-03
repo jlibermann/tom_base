@@ -215,10 +215,14 @@ class GenericBroker(ABC):
         :rtype: list
         """
         targets = []
+        targets_with_errors = []
         for alert in self.fetch_alerts(parameters):
             generic_alert = self.to_generic_alert(alert)
             full_alert = self.fetch_alert(generic_alert.id)
-            target = self.to_target(full_alert)
-            targets.append(target)
+            target, created = self.to_target(full_alert)
+            if created:
+                targets.append(target)
+            else:
+                targets_with_errors.append(target)
 
-        return targets
+        return targets, targets_with_errors

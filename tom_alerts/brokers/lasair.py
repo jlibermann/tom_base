@@ -7,7 +7,7 @@ LASAIR_URL = 'https://lasair.roe.ac.uk'
 
 
 class LasairBrokerForm(GenericQueryForm):
-    name = forms.CharField(required=True)
+    # name = forms.CharField(required=True)
     cone = forms.CharField(required=False, label='Object Cone Search', help_text='Object RA and Dec')
     sqlquery = forms.CharField(required=False, label='Freeform SQL query', help_text='SQL query')
 
@@ -16,19 +16,20 @@ def get_lasair_object(objectId):
     url = LASAIR_URL + '/object/' + objectId + '/json/'
     response = requests.get(url)
     obj = response.json()
+    print(obj)
     jdmax = obj['candidates'][0]['mjd']
     ra = obj['objectData']['ramean']
     dec = obj['objectData']['decmean']
-    glon = obj['objectData']['glonmean']
-    glat = obj['objectData']['glatmean']
+    # glon = obj['objectData']['glonmean']
+    # glat = obj['objectData']['glatmean']
     magpsf = obj['candidates'][0]['magpsf']
     return {
         'alert_id': objectId,
         'timestamp': jdmax,
         'ra': ra,
         'dec': dec,
-        'galactic_lng': glon,
-        'galactic_lat': glat,
+        # 'galactic_lng': glon,
+        # 'galactic_lat': glat,
         'mag': magpsf
     }
 
@@ -52,6 +53,7 @@ class LasairBroker(GenericBroker):
             alerts = []
             for objectId in cone_result['hitlist']:
                 alerts.append(get_lasair_object(objectId))
+            print(alerts)
             return iter(alerts)
 
         # note: the sql SELECT must include objectId
@@ -89,6 +91,7 @@ class LasairBroker(GenericBroker):
         )
 
     def to_target(self, alert):
+        print(alert)
         for c in alert['candidates']:
             if 'candid' in c:
                 break
