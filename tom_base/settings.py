@@ -32,6 +32,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'bootstrap4',
+    'crispy_forms',
+    'django_comments',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,19 +43,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django_extensions',
-    'guardian',
-    'tom_common',
-    'django_comments',
-    'bootstrap4',
-    'crispy_forms',
     'django_filters',
     'django_gravatar',
-    'tom_targets',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    'guardian',
     'tom_alerts',
     'tom_catalogs',
-    'tom_observations',
+    'tom_common',
     'tom_dataproducts',
     'tom_publications',
+    'tom_observations',
+    'tom_targets',
 ]
 
 SITE_ID = 1
@@ -156,6 +157,12 @@ CACHES = {
         'LOCATION': tempfile.gettempdir()
     }
 }
+
+
+# Plotly Dash
+# This appears to be necessary to embed in HTML
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 
 # Static files (CSS, JavaScript, Images)

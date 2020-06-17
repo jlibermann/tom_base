@@ -1,5 +1,5 @@
 {% extends 'tom_common/base.html' %}
-{% load comments bootstrap4 tom_common_extras targets_extras observation_extras dataproduct_extras publication_extras static cache %}
+{% load comments bootstrap4 tom_common_extras targets_extras observation_extras dataproduct_extras publication_extras static cache plotly_dash %}
 {% block title %}Target {{ object.name }}{% endblock %}
 {% block additional_css %}
 <link rel="stylesheet" href="{% static 'tom_targets/css/main.css' %}">
@@ -79,6 +79,7 @@
         {% target_groups target %}
       </div>
       <div class="tab-pane" id="photometry">
+        {% plotly_app name="tom_targets" %}
         {% photometry_for_target target %}
         </div>
       <div class="tab-pane" id="spectroscopy">

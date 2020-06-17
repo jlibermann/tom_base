@@ -1,5 +1,6 @@
 from django.urls import path
 
+from .plots import app
 from .views import TargetCreateView, TargetUpdateView, TargetDetailView
 from .views import TargetDeleteView, TargetListView, TargetImportView, TargetExportView
 from .views import TargetGroupingView, TargetGroupingDeleteView, TargetGroupingCreateView, TargetAddRemoveGroupingView

@@ -30,12 +30,13 @@ setup(
     install_requires=[
         'django>=3.0.7',  # TOM Toolkit requires db math functions
         'django-bootstrap4==1.1.1',
+        'django-contrib-comments>=1.9.2',  # Earlier version are incompatible with Django >= 3.0
+        'django-crispy-forms==1.9.0',
         'django-extensions==2.2.9',
         'django-filter==2.2.0',
-        'django-contrib-comments>=1.9.2',  # Earlier version are incompatible with Django >= 3.0
         'django-gravatar2==1.4.3',
-        'django-crispy-forms==1.9.0',
         'django-guardian==2.2.0',
+        'django-plotly-dash==1.3.1',
         'numpy==1.18.2',
         'python-dateutil==2.8.1',
         'requests==2.23.0',
